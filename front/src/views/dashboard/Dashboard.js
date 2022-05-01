@@ -53,6 +53,8 @@ import avatar6 from 'src/assets/images/avatars/6.jpg'
 
 import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
+import Map from '../../components/Map'
+import WordCloud from '../../components/WordCloud'
 
 const Dashboard = () => {
   const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
@@ -180,6 +182,8 @@ const Dashboard = () => {
 
   return (
     <>
+      <WordCloud />
+      <Map />
       <WidgetsDropdown />
       <CCard className="mb-4">
         <CCardBody>
