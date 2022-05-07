@@ -55,6 +55,11 @@ import WidgetsBrand from '../widgets/WidgetsBrand'
 import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import Map from '../../components/Map'
 import WordCloud from '../../components/WordCloud'
+import { getExample } from '../../api'
+
+const ExampleButton = () => {
+  return <CButton onClick={getExample}></CButton>
+}
 
 const Dashboard = () => {
   const random = (min, max) => Math.floor(Math.random() * (max - min + 1) + min)
@@ -182,6 +187,7 @@ const Dashboard = () => {
 
   return (
     <>
+      <ExampleButton />
       <WordCloud />
       <Map />
       <WidgetsDropdown />
