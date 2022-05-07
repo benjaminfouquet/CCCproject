@@ -32,6 +32,7 @@
     "core-js": "^3.22.3",
     "leaflet": "^1.8.0",
     "leaflet.heat": "^0.2.0",
+    "mapbox-gl": "^2.8.2",
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-app-polyfill": "^3.0.0",
