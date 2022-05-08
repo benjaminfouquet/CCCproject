@@ -5,12 +5,12 @@ import mapboxgl from 'mapbox-gl'
 import Legend from './Legend'
 import Optionsfield from './Optionsfield'
 import './Mapbox.css'
-import data from '../assets/new_boundary.json'
+import data from 'src/assets/updated_sub.json'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { CButton } from '@coreui/react'
 
 //pop up
-const Popup = ({ routeName, routeNumber, city, type }) => (
+const Popup = ({ routeName, routeNumber, offend, sentiment }) => (
   <div className="popup">
     <h4 className="route-name">{routeName}</h4>
     <div className="route-metric-row">
@@ -19,9 +19,9 @@ const Popup = ({ routeName, routeNumber, city, type }) => (
     </div>
     <div className="route-metric-row">
       <h5 className="row-title">Offensive tweets</h5>
-      <div className="row-value">{type}</div>
+      <div className="row-value">{offend}</div>
     </div>
-    <p className="route-city">Sentiment {city}</p>
+    <p className="route-city">Sentiment {sentiment}</p>
   </div>
 )
 
@@ -30,8 +30,8 @@ mapboxgl.accessToken =
 const Mapbox = () => {
   const options = [
     {
-      name: 'Population',
-      description: 'Estimated total population',
+      name: 'Offensive language',
+      description: 'Number of offensive language',
       property: 'no_offend',
       stops: [
         [0, '#f8d5cc'],
@@ -46,19 +46,19 @@ const Mapbox = () => {
       ],
     },
     {
-      name: 'GDP',
-      description: 'Estimate total GDP in millions of dollars',
+      name: 'Sentiment',
+      description: 'Sentiment score',
       property: 'sent_score',
       stops: [
         [0, '#f8d5cc'],
-        [1, '#f4bfb6'],
-        [5, '#f1a8a5'],
-        [10, '#ee8f9a'],
-        [50, '#ec739b'],
-        [100, '#dd5ca8'],
-        [250, '#c44cc0'],
-        [500, '#9f43d7'],
-        [1000, '#6e40e6'],
+        [0.5, '#f4bfb6'],
+        [1, '#f1a8a5'],
+        [1.5, '#ee8f9a'],
+        [2, '#ec739b'],
+        [2.5, '#dd5ca8'],
+        [3, '#c44cc0'],
+        [5, '#9f43d7'],
+        [100, '#6e40e6'],
       ],
     },
   ]
@@ -147,8 +147,8 @@ const Mapbox = () => {
             <Popup
               routeName={feature?.properties?.name}
               routeNumber={feature?.properties?.loc_pid}
-              city={feature?.properties?.no_offend}
-              type={feature?.properties?.sent_score}
+              offend={feature?.properties?.no_offend}
+              sentiment={feature?.properties?.sent_score}
             />,
             popupNode,
           )
@@ -160,8 +160,24 @@ const Mapbox = () => {
     })
 
     // Clean up on unmount
-    return () => map.remove()
-  }, [active.property, active.stops])
+    //   return () => map.remove()
+    // }, [active.property, active.stops])
+    return () => map.remove();
+  }, []);
+
+
+  useEffect(() => {
+    paint();
+  }, [active]);
+
+  const paint = () => {
+    if (map) {
+      map.setPaintProperty('countries', 'fill-color', {
+        property: active.property,
+        stops: active.stops
+      });
+    }
+  };
 
   const changeState = (i) => {
     setActive(options[i])

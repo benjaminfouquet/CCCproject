@@ -26,6 +26,12 @@ const _nav = [
     },
   },
   {
+    component: CNavItem,
+    name: 'Map',
+    to: '/Map',
+    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+  },
+  {
     component: CNavTitle,
     name: 'Theme',
   },
