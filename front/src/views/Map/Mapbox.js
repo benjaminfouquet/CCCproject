@@ -8,20 +8,17 @@ import './Mapbox.css'
 import data from 'src/assets/updated_sub.json'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { CButton } from '@coreui/react'
+import { getExample } from '../../api'
 
 //pop up
-const Popup = ({ routeName, routeNumber, offend, sentiment }) => (
+const Popup = ({ routeName, offend, sentiment, crimeRate }) => (
   <div className="popup">
-    <h4 className="route-name">{routeName}</h4>
+    <h5 className="route-name">{routeName}</h5>
     <div className="route-metric-row">
-      <h5 className="row-title">undecide #</h5>
-      <div className="row-value">{routeNumber}</div>
-    </div>
-    <div className="route-metric-row">
-      <h5 className="row-title">Offensive tweets</h5>
-      <div className="row-value">{offend}</div>
+      <p className="row-value">Offensive tweets {offend}</p>
     </div>
     <p className="route-city">Sentiment {sentiment}</p>
+    <p className="route-city">Crime rate {crimeRate}</p>
   </div>
 )
 
@@ -61,12 +58,32 @@ const Mapbox = () => {
         [100, '#6e40e6'],
       ],
     },
+    {
+      name: 'Crime',
+      description: 'Crime rate',
+      property: 'crime_rate',
+      stops: [
+        [0, '#f8d5cc'],
+        [10, '#f4bfb6'],
+        [50, '#f1a8a5'],
+        [100, '#ee8f9a'],
+        [500, '#ec739b'],
+        [1000, '#dd5ca8'],
+        [2500, '#c44cc0'],
+        [5000, '#9f43d7'],
+        [10000, '#6e40e6'],
+        [20000, '#36013F']
+
+      ],
+    },
   ]
   const mapContainerRef = useRef(null)
   const [active, setActive] = useState(options[0])
   const [map, setMap] = useState(null)
   const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }))
   const [dataset, setDataset] = useState(data)
+
+
 
   const getRandomInt = (max) => {
     return Math.floor(Math.random() * max)
@@ -75,17 +92,21 @@ const Mapbox = () => {
   const updateData = () => {
     const rdmInt = getRandomInt(4)
     const newDataset = dataset
+
     if (newDataset['features'][rdmInt]['properties']['no_offend'] === 1000)
       newDataset['features'][rdmInt]['properties']['no_offend'] = 50
     else {
       newDataset['features'][rdmInt]['properties']['no_offend'] = 1000
     }
     setDataset(newDataset)
-    map.getSource('countries').setData(dataset)
+    map.getSource('countries1').setData(dataset)
   }
 
   const ExampleButton = () => {
-    return <CButton onClick={updateData}></CButton>
+    return <CButton onClick={updateData}>refresh data</CButton>
+  }
+  const ConnectButton = () => {
+    return <CButton onClick={getExample}>connect</CButton>
   }
 
   // Initialize map when component mounts
@@ -98,7 +119,7 @@ const Mapbox = () => {
     })
 
     map.on('load', () => {
-      map.addSource('countries', {
+      map.addSource('countries1', {
         type: 'geojson',
         data,
       })
@@ -115,12 +136,77 @@ const Mapbox = () => {
           'text-font': ['literal', ['DIN Offc Pro Italic', 'Arial Unicode MS Regular']],
         },
       ])
+      //add layer for crime rate
+      // map.addLayer(
+      //   {
+      //     id: 'crime',
+      //     type: 'circle',
+      //     source: 'countries1',
+      //     layout: {
+      //       'visibility': 'visible'
+      //     },
+      //     filter: ['has', 'crime_rate'],
+      //     paint: {
 
+      //       'circle-color': [
+      //         'step',
+      //         ['get', 'crime_rate'],
+      //         '#51bbd6',
+      //         100,
+      //         '#f1f075',
+      //         750,
+      //         '#f28cb1'
+      //       ],
+      //       'circle-radius': [
+      //         'step',
+      //         ['get', 'crime_rate'],
+      //         2,
+      //         100,
+      //         3,
+      //         750,
+      //         4
+      //       ]
+      //     }
+      //   }
+
+      // );
+
+      // map.addLayer(
+      //   {
+      //     id: 'crime',
+      //     type: 'fill',
+      //     source: 'countries1',
+      //     layout: {
+      //       'visibility': 'visible'
+      //     },
+      //     filter: ['has', 'crime_rate'],
+      //     paint: {
+      //       'fill-opacity': 0.7,
+      //       'fill-outline-color': '#000000',
+      //       'fill-color':
+      //         [
+      //           'step',
+      //           ['get', 'crime_rate'],
+      //           '#51bbd6',
+      //           100,
+      //           '#f1f075',
+      //           750,
+      //           '#f28cb1',
+      //           1000,
+      //           '#9f43d7'
+      //         ],
+      //     },
+      //   },
+
+      // )
+
+
+      //layer for offensive lang and sentiment score
       map.addLayer(
         {
           id: 'countries',
           type: 'fill',
-          source: 'countries',
+          source: 'countries1',
           paint: {
             'fill-opacity': 0.7,
             'fill-outline-color': '#000000',
@@ -146,9 +232,9 @@ const Mapbox = () => {
           ReactDOM.render(
             <Popup
               routeName={feature?.properties?.name}
-              routeNumber={feature?.properties?.loc_pid}
               offend={feature?.properties?.no_offend}
               sentiment={feature?.properties?.sent_score}
+              crimeRate={feature?.properties?.crime_rate}
             />,
             popupNode,
           )
@@ -168,6 +254,10 @@ const Mapbox = () => {
 
   useEffect(() => {
     paint();
+    // map.setPaintProperty('crime', 'circle-color', {
+    //   property: 'crime_rate',
+    //   stops: options[1].stops
+    // });
   }, [active]);
 
   const paint = () => {
@@ -179,17 +269,19 @@ const Mapbox = () => {
     }
   };
 
+  //switcher
   const changeState = (i) => {
     setActive(options[i])
     map.setPaintProperty('countries', 'fill-color', {
       property: active.property,
       stops: active.stops,
     })
+
   }
-  //add pop up function
 
   return (
     <div>
+      <ConnectButton />
       <ExampleButton />
       <div ref={mapContainerRef} className="h600" />
       <Legend active={active} stops={active.stops} />

@@ -56,6 +56,7 @@ import WidgetsDropdown from '../widgets/WidgetsDropdown'
 import Map from '../../components/Map'
 import WordCloud from '../../components/WordCloud'
 // import Mapbox from '../Map/Mapbox'
+import BChart from '../../components/Barchart'
 import { getExample } from '../../api'
 
 const ExampleButton = () => {
@@ -189,6 +190,7 @@ const Dashboard = () => {
   return (
     <>
       {/* <Mapbox /> */}
+      <BChart />
       <ExampleButton />
       <WordCloud />
       <Map />
