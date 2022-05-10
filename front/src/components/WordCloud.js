@@ -23,7 +23,6 @@ const options = {
 export default function WordCloud() {
   return (
     <div>
-      <p>Configure options in the code editor!</p>
       <div style={{ height: 400, width: 600 }}>
         <ReactWordcloud options={options} words={words} />
       </div>
