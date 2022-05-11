@@ -258,7 +258,7 @@ const Dashboard = () => {
         </CCard>
       </div>
       <CRow>
-        <CCol xs={6}>
+        {/* <CCol xs={6}>
           <CCard className="mb-4">
             <CCardHeader>Number of Tweets by Sentiment</CCardHeader>
             <CCardBody>
@@ -275,7 +275,7 @@ const Dashboard = () => {
               />
             </CCardBody>
           </CCard>
-        </CCol>
+        </CCol> */}
         {/* <CCol>
           <WidgetsBrand withCharts />
         </CCol> */}
