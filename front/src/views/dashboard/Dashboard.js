@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import { CCard, CCardBody, CCardHeader, CCol, CRow, CFormSelect } from '@coreui/react'
-import { CChartLine, CChartDoughnut, CChartBar } from '@coreui/react-chartjs'
+import { CChartLine, CChartBar } from '@coreui/react-chartjs'
 import { getStyle, hexToRgba } from '@coreui/utils'
 import { getMainSuburb } from '../../api'
 import { words } from '../../assets/words'
