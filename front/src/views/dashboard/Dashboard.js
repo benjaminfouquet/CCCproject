@@ -1,22 +1,34 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
-import { CCard, CCardBody, CCardFooter, CCardHeader, CCol, CProgress, CRow } from '@coreui/react'
+import { CCard, CCardBody, CCardHeader, CCol, CRow, CFormSelect } from '@coreui/react'
 import { CChartLine, CChartDoughnut, CChartBar } from '@coreui/react-chartjs'
 import { getStyle, hexToRgba } from '@coreui/utils'
+import { getMainSuburb } from '../../api'
+import { words } from '../../assets/words'
 
-import WidgetsBrand from '../widgets/WidgetsBrand'
+// import WidgetsBrand from '../widgets/WidgetsBrand'
 import WordCloud from '../../components/WordCloud'
+import WidgetsDropdown from '../widgets/WidgetsDropdown'
 
 const Dashboard = () => {
-  const progressExample = [
-    { title: 'Number of Tweets', value: '29.703 Tweets', percent: 100, color: 'blue' },
-    { title: 'Number of Offensive Tweets', value: '24.093 Tweets', percent: 100, color: 'red' },
+  const [suburbData, setSuburbData] = useState([])
+  const [selectedSuburb, setSelectedSuburb] = useState(0)
+  const selectOptions = [
+    'CARLTON',
+    'CARLTON NORTH',
+    'DOCKLANDS',
+    'EAST MELBOURNE',
+    'FLEMINGTON',
+    'KENSINGTON',
+    'MELBOURNE',
+    'NORTH MELBOURNE',
+    'PARKVILLE',
+    'PORT MELBOURNE',
+    'SOUTH MELBOURNE',
+    'SOUTH YARRA',
+    'SOUTHBANK',
+    'WEST MELBOURNE',
   ]
-
-  const randData = (size, max) => {
-    return Array.from({ length: size }, () => Math.floor(Math.random() * max))
-  }
-
   const labels = [
     '0:00',
     '1:00',
@@ -43,18 +55,76 @@ const Dashboard = () => {
     '22:00',
     '23:00',
   ]
-  const nbTweets = randData(24, 10000)
-  const nbOffTweets = randData(24, 5000)
+
   const today = new Date()
+
+  const fetchSuburbData = async () => {
+    const newSuburbData = await getMainSuburb()
+    setSuburbData(newSuburbData)
+  }
+
+  const perc2color = (perc, transparency = true, min = -3.5, max = 3.5) => {
+    var base = max - min
+
+    if (base === 0) {
+      perc = 100
+    } else {
+      perc = ((perc - min) / base) * 100
+    }
+    var r,
+      g,
+      b = 0
+    if (perc < 50) {
+      r = 255
+      g = Math.round(5.1 * perc)
+    } else {
+      g = 255
+      r = Math.round(510 - 5.1 * perc)
+    }
+    var h = r * 0x10000 + g * 0x100 + b * 0x1
+    const transp = transparency ? '99' : ''
+    return '#' + ('000000' + h.toString(16)).slice(-6) + transp
+  }
+
+  useEffect(() => {
+    fetchSuburbData()
+  }, [])
 
   return (
     <>
+      <CCol xs={12}>
+        <CCard className="mb-4">
+          <CCardHeader>
+            <strong>Select a suburb</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CFormSelect
+              aria-label="Default select example"
+              onChange={(e) => {
+                console.log(e)
+                setSelectedSuburb(parseInt(e.target.value))
+              }}
+            >
+              {selectOptions.map((option, index) => (
+                <option key={option} value={index}>
+                  {option}
+                </option>
+              ))}
+            </CFormSelect>
+          </CCardBody>
+        </CCard>
+      </CCol>
+      {suburbData.length > 0 ? (
+        <WidgetsDropdown selectedSuburbData={suburbData[selectedSuburb]} />
+      ) : (
+        <></>
+      )}
       <CCard className="mb-4">
         <CCardBody>
           <CRow>
             <CCol sm={5}>
               <h4 id="traffic" className="card-title mb-0">
-                Tweets and Offensive Tweets
+                Offensive Tweets by Hour
               </h4>
               <div className="small text-medium-emphasis">{today.toLocaleDateString('en-AU')}</div>
             </CCol>
@@ -65,22 +135,14 @@ const Dashboard = () => {
               labels: labels,
               datasets: [
                 {
-                  label: 'My First dataset',
+                  label: 'Nb offensive tweets',
                   backgroundColor: hexToRgba(getStyle('--cui-info'), 10),
                   borderColor: getStyle('--cui-info'),
                   pointHoverBackgroundColor: getStyle('--cui-info'),
                   borderWidth: 2,
-                  data: nbTweets,
+                  data:
+                    suburbData.length > 0 ? suburbData[selectedSuburb]['offensive_by_hour'] : [],
                   fill: true,
-                },
-                {
-                  label: 'My Third dataset',
-                  backgroundColor: 'transparent',
-                  borderColor: getStyle('--cui-danger'),
-                  pointHoverBackgroundColor: getStyle('--cui-danger'),
-                  borderWidth: 1,
-                  borderDash: [8, 5],
-                  data: nbOffTweets,
                 },
               ],
             }}
@@ -120,38 +182,85 @@ const Dashboard = () => {
             }}
           />
         </CCardBody>
-        <CCardFooter>
-          <CRow xs={{ cols: 1 }} md={{ cols: 2 }} className="text-center">
-            {progressExample.map((item, index) => (
-              <CCol className="mb-sm-2 mb-0" key={index}>
-                <div className="text-medium-emphasis">{item.title}</div>
-                <strong>{item.value}</strong>
-                <CProgress thin className="mt-2" color={item.color} value={item.percent} />
-              </CCol>
-            ))}
-          </CRow>
-        </CCardFooter>
       </CCard>
 
       <CRow>
         <CCol xs={6}>
           <CCard className="mb-4">
-            <CCardHeader>Most popular offensive words</CCardHeader>
-            <WordCloud />
+            <CCardHeader>Most popular words</CCardHeader>
+            <WordCloud
+              words={suburbData[selectedSuburb] ? suburbData[selectedSuburb]['word_freq'] : words}
+            />
           </CCard>
         </CCol>
         <CCol xs={6}>
           <CCard className="mb-4">
-            <CCardHeader>Most offensive words</CCardHeader>
-            <WordCloud />
+            <CCardHeader>Most popular offensive words</CCardHeader>
+            <WordCloud
+              words={
+                suburbData[selectedSuburb] ? suburbData[selectedSuburb]['word_freq_neg'] : words
+              }
+            />
           </CCard>
         </CCol>
       </CRow>
-
+      <div>
+        <CCard className="mb-4 mt-4">
+          <CCardHeader>Crime rates, Tweets and Sentiment by suburb</CCardHeader>
+          <CCardBody>
+            <CChartBar
+              //city of melbourne suburb
+              data={{
+                labels:
+                  suburbData.length > 0 ? suburbData.map((suburb) => suburb['region_full']) : [],
+                datasets: [
+                  {
+                    label: 'crime rate',
+                    yAxisID: 'A',
+                    data:
+                      suburbData.length > 0 ? suburbData.map((suburb) => suburb['crime_rate']) : [],
+                    backgroundColor:
+                      suburbData.length > 0
+                        ? suburbData.map((suburb) => perc2color(suburb['sent_score'], false))
+                        : '#F87979',
+                  },
+                  {
+                    label: 'no.of offensive tweets',
+                    yAxisID: 'B',
+                    data:
+                      suburbData.length > 0
+                        ? suburbData.map((suburb) => suburb['no_offensive'])
+                        : [],
+                    backgroundColor:
+                      suburbData.length > 0
+                        ? suburbData.map((suburb) => perc2color(suburb['sent_score']))
+                        : '#962E1A',
+                  },
+                ],
+              }}
+              options={{
+                scales: {
+                  A: {
+                    type: 'linear',
+                    position: 'left',
+                  },
+                  B: {
+                    type: 'linear',
+                    position: 'right',
+                    grid: {
+                      display: false,
+                    },
+                  },
+                },
+              }}
+            />
+          </CCardBody>
+        </CCard>
+      </div>
       <CRow>
         <CCol xs={6}>
           <CCard className="mb-4">
-            <CCardHeader>Doughnut Chart</CCardHeader>
+            <CCardHeader>Number of Tweets by Sentiment</CCardHeader>
             <CCardBody>
               <CChartDoughnut
                 data={{
@@ -167,29 +276,10 @@ const Dashboard = () => {
             </CCardBody>
           </CCard>
         </CCol>
-        <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Bar Chart</CCardHeader>
-            <CCardBody>
-              <CChartBar
-                data={{
-                  labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
-                  datasets: [
-                    {
-                      label: 'GitHub Commits',
-                      backgroundColor: '#f87979',
-                      data: [40, 20, 12, 39, 10, 40, 39, 80, 40],
-                    },
-                  ],
-                }}
-                labels="months"
-              />
-            </CCardBody>
-          </CCard>
-        </CCol>
+        {/* <CCol>
+          <WidgetsBrand withCharts />
+        </CCol> */}
       </CRow>
-
-      <WidgetsBrand withCharts />
     </>
   )
 }
