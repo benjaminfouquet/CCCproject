@@ -4,7 +4,7 @@ import ReactDOM from 'react-dom'
 import mapboxgl from 'mapbox-gl'
 import data from 'src/assets/updated_sub.json'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { CButton } from '@coreui/react'
+import { CButton, CCallout } from '@coreui/react'
 import { getExample } from '../../api'
 import { getMap } from '../../api'
 import sushiImage from './foodicons/sushi.png'
@@ -17,7 +17,7 @@ import hummusImage from './foodicons/hummus.png'
 import paellaImage from './foodicons/paella.png'
 import saladImage from './foodicons/salad.png'
 import tomyumImage from './foodicons/tom-yum.png'
-import vegemiteImage from './foodicons/tom-yum.png'
+import vegemiteImage from './foodicons/vegemite.png'
 //pop up
 const Popup = ({ routeName, food }) => (
     <div className="popup">
@@ -43,7 +43,7 @@ const FoodMap = () => {
     }, [example])
 
     const ExampleButton = () => {
-        return <CButton onClick={loadExample}>Refresh data</CButton>
+        return <CButton color="warning" onClick={loadExample}>Refresh data</CButton>
     }
 
     const mapContainerRef = useRef(null)
@@ -82,6 +82,7 @@ const FoodMap = () => {
             zoom: 10,
         })
 
+        //layer for boundaries
         map.on('load', () => {
             map.addSource('food', {
                 type: 'geojson',
@@ -95,8 +96,6 @@ const FoodMap = () => {
                     source: 'food',
                     paint: {
                         'line-color': 'silver'
-                        // 'fill-opacity': 0.7,
-                        // 'fill-outline-color': '#000000',
                     },
                 },
             )
@@ -178,31 +177,14 @@ const FoodMap = () => {
                             'Greek', 'salad',
                             'Thai', 'tomyum',
                             'Italian', 'pizza',
-                            'vegemite'
-
-                            // 'static', [
-                            //    'match', 
-                            //     ['get', 'name'], // Use the result 'name' property
-                            //     'airport', 'airport-icon',
-                            //     'building', 'building-icon',
-                            //     'bridge', 'bridge-icon',
-                            //     '' // none for any other type
-                            //      ],
-                            // 'ship', 'harbor-15',
-                            // 'airfield-15' // any other type
+                            ''
                         ],
                         'icon-size': 0.5
                     }
-                    // filter: ['==', '$type', 'Point']
                 }
 
 
             );
-
-            //layer for offensive lang and sentiment score
-
-
-
 
             //pop up
             map.on('click', (e) => {
@@ -227,36 +209,18 @@ const FoodMap = () => {
             setMap(map)
         })
 
-        // Clean up on unmount
-        //   return () => map.remove()
-        // }, [active.property, active.stops])
         return () => map.remove();
     }, []);
 
 
-    // useEffect(() => {
-    //     paint();
-    //     // map.setPaintProperty('crime', 'circle-color', {
-    //     //   property: 'crime_rate',
-    //     //   stops: options[1].stops
-    //     // });
-    // }, [active]);
-
-    // const paint = () => {
-    //     if (map) {
-    //         map.setPaintProperty('countries', 'fill-color', {
-    //             property: active.property,
-    //             stops: active.stops
-    //         });
-    //     }
-    // };
-
-
     return (
         <div>
+            <h1>Food Map of Melbourne</h1>
+            <CCallout color="dark">
+                This map shows people's favorite types of cuisine in different suburbs in Melbourne extracted from Twitter. Click the 'Refresh data' button to see the latest data. Click the food icons on the map to see the suburb's name and its favorite cuisine!
+            </CCallout>
             <ExampleButton />
-            <div ref={mapContainerRef} className="h600" />
-            {/* <Legend active={active} stops={active.stops} /> */}
+            <div ref={mapContainerRef} className="h600 mt12" />
         </div>
     )
 }

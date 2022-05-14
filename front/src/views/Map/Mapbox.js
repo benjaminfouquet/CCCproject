@@ -7,7 +7,7 @@ import Optionsfield from './Optionsfield'
 import './Mapbox.css'
 import data from 'src/assets/updated_sub.json'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import { CButton } from '@coreui/react'
+import { CButton, CCallout } from '@coreui/react'
 import { getExample } from '../../api'
 import { getMap } from '../../api'
 import { getMainSuburb } from '../../api'
@@ -45,7 +45,7 @@ const Mapbox = () => {
   const options = [
     {
       name: 'Offensive language',
-      description: 'Number of offensive language',
+      description: 'Number of swear words used',
       property: 'no_offend',
       stops: [
         [0, '#f8d5cc'],
@@ -102,12 +102,8 @@ const Mapbox = () => {
 
   const updateSub = (updateLs) => {
     // const type = typeof updateLs
-    console.log(updateLs.length)
     const newDataset = dataset
     for (let i = 0; i < updateLs.length; i++) {
-      console.log("index", i)
-      // console.log(updateLs[i]['no_offensive'])
-      // console.log(newDataset['features'][i]['properties']['no_offend'])
       newDataset['features'][i]['properties']['crime_rate'] = updateLs[i]['crime_rate']
       newDataset['features'][i]['properties']['sent_score'] = updateLs[i]['sent_score']
       newDataset['features'][i]['properties']['no_offend'] = updateLs[i]['no_offensive']
@@ -118,30 +114,6 @@ const Mapbox = () => {
 
   }
 
-  // const TestButton = () => {
-  //   return <CButton onClick={updateSub(example)}>test</CButton>
-  // }
-
-  // const getRandomInt = (max) => {
-  //   return Math.floor(Math.random() * max)
-  // }
-
-  // const updateData = () => {
-  //   const rdmInt = getRandomInt(4)
-  //   const newDataset = dataset
-
-  //   if (newDataset['features'][rdmInt]['properties']['no_offend'] === 1000)
-  //     newDataset['features'][rdmInt]['properties']['no_offend'] = 50
-  //   else {
-  //     newDataset['features'][rdmInt]['properties']['no_offend'] = 1000
-  //   }
-  //   setDataset(newDataset)
-  //   map.getSource('countries1').setData(dataset)
-  // }
-
-  // const ExampleButton = () => {
-  //   return <CButton onClick={updateData}>refresh data</CButton>
-  // }
   const ConnectButton = () => {
     return <CButton onClick={getExample}>connect</CButton>
 
@@ -175,70 +147,6 @@ const Mapbox = () => {
           'text-font': ['literal', ['DIN Offc Pro Italic', 'Arial Unicode MS Regular']],
         },
       ])
-
-      //add layer for crime rate
-      // map.addLayer(
-      //   {
-      //     id: 'crime',
-      //     type: 'circle',
-      //     source: 'countries1',
-      //     layout: {
-      //       'visibility': 'visible'
-      //     },
-      //     filter: ['has', 'crime_rate'],
-      //     paint: {
-
-      //       'circle-color': [
-      //         'step',
-      //         ['get', 'crime_rate'],
-      //         '#51bbd6',
-      //         100,
-      //         '#f1f075',
-      //         750,
-      //         '#f28cb1'
-      //       ],
-      //       'circle-radius': [
-      //         'step',
-      //         ['get', 'crime_rate'],
-      //         2,
-      //         100,
-      //         3,
-      //         750,
-      //         4
-      //       ]
-      //     }
-      //   }
-
-      // );
-
-      // map.addLayer(
-      //   {
-      //     id: 'crime',
-      //     type: 'fill',
-      //     source: 'countries1',
-      //     layout: {
-      //       'visibility': 'visible'
-      //     },
-      //     filter: ['has', 'crime_rate'],
-      //     paint: {
-      //       'fill-opacity': 0.7,
-      //       'fill-outline-color': '#000000',
-      //       'fill-color':
-      //         [
-      //           'step',
-      //           ['get', 'crime_rate'],
-      //           '#51bbd6',
-      //           100,
-      //           '#f1f075',
-      //           750,
-      //           '#f28cb1',
-      //           1000,
-      //           '#9f43d7'
-      //         ],
-      //     },
-      //   },
-
-      // )
 
 
       //layer for offensive lang and sentiment score
@@ -286,18 +194,12 @@ const Mapbox = () => {
     })
 
     // Clean up on unmount
-    //   return () => map.remove()
-    // }, [active.property, active.stops])
     return () => map.remove();
   }, []);
 
 
   useEffect(() => {
     paint();
-    // map.setPaintProperty('crime', 'circle-color', {
-    //   property: 'crime_rate',
-    //   stops: options[1].stops
-    // });
   }, [active]);
 
   const paint = () => {
@@ -321,10 +223,12 @@ const Mapbox = () => {
 
   return (
     <div>
-      {/* <TestButton /> */}
-      {/* <ConnectButton /> */}
+      <h1>What influence the crime rate in Melbourne?</h1>
+      <CCallout color="dark">
+        What influences the crime rate in Melbourne? We create this map that shows the sentiment, the number of swear words used, and the crime rate in different suburbs in Melbourne extracted from Twitter, wanting to explore the potential connections among them. Click the 'Refresh data' button to see the latest data. Switch options below the map to see different information. Click a specific suburb on the map to see its detailed data.
+      </CCallout>
       <ExampleButton />
-      <div ref={mapContainerRef} className="h600" />
+      <div ref={mapContainerRef} className="h600 mt12" />
       <Legend active={active} stops={active.stops} />
       <Optionsfield options={options} property={active.property} changeState={changeState} />
     </div>
