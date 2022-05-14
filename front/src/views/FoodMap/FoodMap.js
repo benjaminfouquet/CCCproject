@@ -61,7 +61,7 @@ const FoodMap = () => {
             // console.log(newDataset['features'][i]['properties']['no_offend'])
             newDataset['features'][i]['properties']['fav_food'] = updateLs[i]['fav_food']
             setDataset(newDataset)
-            map.getSource('countries1').setData(dataset)
+            map.getSource('food').setData(dataset)
             console.log(i)
         }
 
