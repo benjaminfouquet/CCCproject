@@ -45,7 +45,7 @@ const Mapbox = () => {
   const options = [
     {
       name: 'Offensive language',
-      description: 'Number of swear words used',
+      description: 'Number of offensive tweets',
       property: 'no_offend',
       stops: [
         [0, '#f8d5cc'],
@@ -225,7 +225,7 @@ const Mapbox = () => {
     <div>
       <h1>What influence the crime rate in Melbourne?</h1>
       <CCallout color="dark">
-        What influences the crime rate in Melbourne? We create this map that shows the sentiment, the number of swear words used, and the crime rate in different suburbs in Melbourne extracted from Twitter, wanting to explore the potential connections among them. Click the 'Refresh data' button to see the latest data. Switch options below the map to see different information. Click a specific suburb on the map to see its detailed data.
+        What influences the crime rate in Melbourne? We create this map that shows the sentiment, the number of offensive tweets, and the crime rate in different suburbs in Melbourne extracted from Twitter, wanting to explore the potential connections among them. Click the 'Refresh data' button to see the latest data. Switch options below the map to see different information. Click a specific suburb on the map to see its detailed data.
       </CCallout>
       <ExampleButton />
       <div ref={mapContainerRef} className="h600 mt12" />
