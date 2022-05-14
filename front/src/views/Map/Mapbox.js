@@ -9,7 +9,8 @@ import data from 'src/assets/updated_sub.json'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { CButton } from '@coreui/react'
 import { getExample } from '../../api'
-
+import { getMap } from '../../api'
+import { getMainSuburb } from '../../api'
 //pop up
 const Popup = ({ routeName, offend, sentiment, crimeRate }) => (
   <div className="popup">
@@ -25,6 +26,22 @@ const Popup = ({ routeName, offend, sentiment, crimeRate }) => (
 mapboxgl.accessToken =
   'pk.eyJ1IjoibHVuYWxpYW5nIiwiYSI6ImNsMmxtY3NvOTBvZTAzbG5xNzQwM2tsaXMifQ.5lgZAlrVz9lZybZTOv6JAQ'
 const Mapbox = () => {
+
+  const [example, setExample] = useState([])
+  const loadExample = async () => {
+    const example = await getMap()
+    setExample(example)
+    updateSub(example)
+  }
+  useEffect(() => {
+    console.log(example)
+  }, [example])
+
+  const ExampleButton = () => {
+    return <CButton onClick={loadExample}>Refresh data</CButton>
+  }
+
+
   const options = [
     {
       name: 'Offensive language',
@@ -83,30 +100,52 @@ const Mapbox = () => {
   const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }))
   const [dataset, setDataset] = useState(data)
 
-
-
-  const getRandomInt = (max) => {
-    return Math.floor(Math.random() * max)
-  }
-
-  const updateData = () => {
-    const rdmInt = getRandomInt(4)
+  const updateSub = (updateLs) => {
+    // const type = typeof updateLs
+    console.log(updateLs.length)
     const newDataset = dataset
-
-    if (newDataset['features'][rdmInt]['properties']['no_offend'] === 1000)
-      newDataset['features'][rdmInt]['properties']['no_offend'] = 50
-    else {
-      newDataset['features'][rdmInt]['properties']['no_offend'] = 1000
+    for (let i = 0; i < updateLs.length; i++) {
+      console.log("index", i)
+      // console.log(updateLs[i]['no_offensive'])
+      // console.log(newDataset['features'][i]['properties']['no_offend'])
+      newDataset['features'][i]['properties']['crime_rate'] = updateLs[i]['crime_rate']
+      newDataset['features'][i]['properties']['sent_score'] = updateLs[i]['sent_score']
+      newDataset['features'][i]['properties']['no_offend'] = updateLs[i]['no_offensive']
+      setDataset(newDataset)
+      map.getSource('countries1').setData(dataset)
+      console.log(i)
     }
-    setDataset(newDataset)
-    map.getSource('countries1').setData(dataset)
+
   }
 
-  const ExampleButton = () => {
-    return <CButton onClick={updateData}>refresh data</CButton>
-  }
+  // const TestButton = () => {
+  //   return <CButton onClick={updateSub(example)}>test</CButton>
+  // }
+
+  // const getRandomInt = (max) => {
+  //   return Math.floor(Math.random() * max)
+  // }
+
+  // const updateData = () => {
+  //   const rdmInt = getRandomInt(4)
+  //   const newDataset = dataset
+
+  //   if (newDataset['features'][rdmInt]['properties']['no_offend'] === 1000)
+  //     newDataset['features'][rdmInt]['properties']['no_offend'] = 50
+  //   else {
+  //     newDataset['features'][rdmInt]['properties']['no_offend'] = 1000
+  //   }
+  //   setDataset(newDataset)
+  //   map.getSource('countries1').setData(dataset)
+  // }
+
+  // const ExampleButton = () => {
+  //   return <CButton onClick={updateData}>refresh data</CButton>
+  // }
   const ConnectButton = () => {
     return <CButton onClick={getExample}>connect</CButton>
+
+
   }
 
   // Initialize map when component mounts
@@ -136,6 +175,7 @@ const Mapbox = () => {
           'text-font': ['literal', ['DIN Offc Pro Italic', 'Arial Unicode MS Regular']],
         },
       ])
+
       //add layer for crime rate
       // map.addLayer(
       //   {
@@ -281,7 +321,8 @@ const Mapbox = () => {
 
   return (
     <div>
-      <ConnectButton />
+      {/* <TestButton /> */}
+      {/* <ConnectButton /> */}
       <ExampleButton />
       <div ref={mapContainerRef} className="h600" />
       <Legend active={active} stops={active.stops} />

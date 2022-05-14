@@ -48,7 +48,7 @@ const Charts = () => {
           <CCardBody>
             <CChartLine
               data={{
-                labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+                labels: ['Janurary', 'February', 'March', 'April', 'May', 'June', 'July'],
                 datasets: [
                   {
                     label: 'My First dataset',
