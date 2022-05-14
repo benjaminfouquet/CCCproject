@@ -1,0 +1,14 @@
+numpy
+couchdb
+tweepy
+django
+django-filter
+djangorestframework
+apscheduler
+Django
+djangorestframework
+pandas
+CouchDB
+requests
+APScheduler
+markdown
