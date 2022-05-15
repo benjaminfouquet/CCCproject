@@ -161,18 +161,6 @@ const Mapbox = () => {
     return () => map.remove()
   }, [active.property, active.stops])
 
-  useEffect(() => {
-    function paint() {
-      if (map) {
-        map.setPaintProperty('countries', 'fill-color', {
-          property: active.property,
-          stops: active.stops,
-        })
-      }
-    }
-    paint()
-  }, [active, map])
-
   const loadExample = useCallback(async () => {
     function updateSub(updateLs) {
       // const type = typeof updateLs
