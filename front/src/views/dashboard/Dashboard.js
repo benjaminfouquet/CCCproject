@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 
-import { CCard, CCardBody, CCardHeader, CCol, CRow, CFormSelect } from '@coreui/react'
+import { CCard, CCardBody, CCardHeader, CCol, CRow, CFormSelect, CCardFooter } from '@coreui/react'
 import { CChartLine, CChartBar } from '@coreui/react-chartjs'
 import { getStyle, hexToRgba } from '@coreui/utils'
 import { getMainSuburb } from '../../api'
@@ -12,7 +12,13 @@ import WidgetsDropdown from '../widgets/WidgetsDropdown'
 
 const Dashboard = () => {
   const [suburbData, setSuburbData] = useState([])
+  const [suburbSentScores, setSuburbSentScores] = useState([])
   const [selectedSuburb, setSelectedSuburb] = useState(0)
+  useEffect(() => {
+    const newsuburbSentScore = suburbData.map((suburb) => suburb['sent_score'])
+    setSuburbSentScores(newsuburbSentScore)
+  }, [suburbData])
+
   const selectOptions = [
     'CARLTON',
     'CARLTON NORTH',
@@ -63,7 +69,12 @@ const Dashboard = () => {
     setSuburbData(newSuburbData)
   }
 
-  const perc2color = (perc, transparency = true, min = -3.5, max = 3.5) => {
+  const perc2color = (
+    perc,
+    transparency = true,
+    min = Math.min(...suburbSentScores),
+    max = Math.max(...suburbSentScores),
+  ) => {
     var base = max - min
 
     if (base === 0) {
@@ -101,7 +112,6 @@ const Dashboard = () => {
             <CFormSelect
               aria-label="Default select example"
               onChange={(e) => {
-                console.log(e)
                 setSelectedSuburb(parseInt(e.target.value))
               }}
             >
@@ -114,6 +124,70 @@ const Dashboard = () => {
           </CCardBody>
         </CCard>
       </CCol>
+      <div>
+        <CCard className="mb-4 mt-4">
+          <CCardHeader>Crime rates, Tweets and Sentiment by suburb</CCardHeader>
+          <CCardBody>
+            <CChartBar
+              //city of melbourne suburb
+              data={{
+                labels:
+                  suburbData.length > 0 ? suburbData.map((suburb) => suburb['region_full']) : [],
+                datasets: [
+                  {
+                    label: 'crime rate',
+                    yAxisID: 'A',
+                    data:
+                      suburbData.length > 0 ? suburbData.map((suburb) => suburb['crime_rate']) : [],
+                    backgroundColor:
+                      suburbData.length > 0
+                        ? suburbData.map((suburb) => perc2color(suburb['sent_score'], false))
+                        : '#F87979',
+                  },
+                  {
+                    label: 'no.of offensive tweets',
+                    yAxisID: 'B',
+                    data:
+                      suburbData.length > 0
+                        ? suburbData.map((suburb) => suburb['no_offensive'])
+                        : [],
+                    backgroundColor:
+                      suburbData.length > 0
+                        ? suburbData.map((suburb) => perc2color(suburb['sent_score']))
+                        : '#962E1A',
+                  },
+                ],
+              }}
+              options={{
+                scales: {
+                  A: {
+                    type: 'linear',
+                    position: 'left',
+                  },
+                  B: {
+                    type: 'linear',
+                    position: 'right',
+                    grid: {
+                      display: false,
+                    },
+                  },
+                },
+              }}
+            />
+          </CCardBody>
+          <CCardFooter>
+            <CRow xs={{ cols: 2 }} md={{ cols: 5 }} className="text-center">
+              <CCol className="mb-sm-2 mb-0">Color scaled on the sentiment score</CCol>
+              <CCol className="mb-sm-2 mb-0">
+                <img
+                  src="https://cloud.githubusercontent.com/assets/928116/16114032/70c167ea-33bf-11e6-9265-0e98f1ba805b.png"
+                  alt="output"
+                ></img>
+              </CCol>
+            </CRow>
+          </CCardFooter>
+        </CCard>
+      </div>
       {suburbData.length > 0 ? (
         <WidgetsDropdown selectedSuburbData={suburbData[selectedSuburb]} />
       ) : (
@@ -135,7 +209,7 @@ const Dashboard = () => {
               labels: labels,
               datasets: [
                 {
-                  label: 'Nb offensive tweets',
+                  label: 'Nb tweets',
                   backgroundColor: hexToRgba(getStyle('--cui-info'), 10),
                   borderColor: getStyle('--cui-info'),
                   pointHoverBackgroundColor: getStyle('--cui-info'),
@@ -144,6 +218,19 @@ const Dashboard = () => {
                     suburbData.length > 0 ? suburbData[selectedSuburb]['offensive_by_hour'] : [],
                   fill: true,
                 },
+                // {
+                //   label: 'Proportion of offensive tweets',
+                //   backgroundColor: 'transparent',
+                //   borderColor: getStyle('--cui-danger'),
+                //   pointHoverBackgroundColor: getStyle('--cui-danger'),
+                //   borderWidth: 1,
+                //   borderDash: [8, 5],
+                //   data:
+                //     suburbData.length > 0
+                //       ? suburbData[selectedSuburb]['offensive_by_hour'] /
+                //         suburbData[selectedSuburb]['total_by_hour']
+                //       : [],
+                // },
               ],
             }}
             options={{
@@ -203,82 +290,6 @@ const Dashboard = () => {
             />
           </CCard>
         </CCol>
-      </CRow>
-      <div>
-        <CCard className="mb-4 mt-4">
-          <CCardHeader>Crime rates, Tweets and Sentiment by suburb</CCardHeader>
-          <CCardBody>
-            <CChartBar
-              //city of melbourne suburb
-              data={{
-                labels:
-                  suburbData.length > 0 ? suburbData.map((suburb) => suburb['region_full']) : [],
-                datasets: [
-                  {
-                    label: 'crime rate',
-                    yAxisID: 'A',
-                    data:
-                      suburbData.length > 0 ? suburbData.map((suburb) => suburb['crime_rate']) : [],
-                    backgroundColor:
-                      suburbData.length > 0
-                        ? suburbData.map((suburb) => perc2color(suburb['sent_score'], false))
-                        : '#F87979',
-                  },
-                  {
-                    label: 'no.of offensive tweets',
-                    yAxisID: 'B',
-                    data:
-                      suburbData.length > 0
-                        ? suburbData.map((suburb) => suburb['no_offensive'])
-                        : [],
-                    backgroundColor:
-                      suburbData.length > 0
-                        ? suburbData.map((suburb) => perc2color(suburb['sent_score']))
-                        : '#962E1A',
-                  },
-                ],
-              }}
-              options={{
-                scales: {
-                  A: {
-                    type: 'linear',
-                    position: 'left',
-                  },
-                  B: {
-                    type: 'linear',
-                    position: 'right',
-                    grid: {
-                      display: false,
-                    },
-                  },
-                },
-              }}
-            />
-          </CCardBody>
-        </CCard>
-      </div>
-      <CRow>
-        {/* <CCol xs={6}>
-          <CCard className="mb-4">
-            <CCardHeader>Number of Tweets by Sentiment</CCardHeader>
-            <CCardBody>
-              <CChartDoughnut
-                data={{
-                  labels: ['Positive', 'Neutral', 'Negative'],
-                  datasets: [
-                    {
-                      backgroundColor: ['#41B883', '#00D8FF', '#DD1B16'],
-                      data: [1800, 202, 1450],
-                    },
-                  ],
-                }}
-              />
-            </CCardBody>
-          </CCard>
-        </CCol> */}
-        {/* <CCol>
-          <WidgetsBrand withCharts />
-        </CCol> */}
       </CRow>
     </>
   )

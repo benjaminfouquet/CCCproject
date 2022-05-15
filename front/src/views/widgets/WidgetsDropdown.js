@@ -9,7 +9,7 @@ const WidgetsDropdown = ({ selectedSuburbData }) => {
         <CWidgetStatsA
           className="mb-4"
           color="primary"
-          value={selectedSuburbData['no_offensive']}
+          value={selectedSuburbData['total_tweet']}
           title="Nb tweets"
           style={{ paddingBottom: 30 }}
         />
@@ -22,7 +22,12 @@ const WidgetsDropdown = ({ selectedSuburbData }) => {
             <>
               {selectedSuburbData['no_offensive']}{' '}
               <small>
-                ({(100 * selectedSuburbData['no_offensive']) / selectedSuburbData['no_offensive']}%)
+                (
+                {Math.round(
+                  (100 * selectedSuburbData['no_offensive']) / selectedSuburbData['total_tweet'],
+                  0,
+                )}
+                %)
               </small>{' '}
             </>
           }
