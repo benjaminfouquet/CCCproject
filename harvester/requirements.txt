@@ -1,0 +1,7 @@
+tweepy
+pandas
+nltk
+pytz
+couchdb
+shapely
+numpy

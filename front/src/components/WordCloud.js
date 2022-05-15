@@ -1,8 +1,8 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
 import ReactWordcloud from 'react-wordcloud'
 import 'tippy.js/dist/tippy.css'
 import 'tippy.js/animations/scale.css'
-import { words } from '../assets/words'
 
 const options = {
   colors: ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd', '#8c564b'],
@@ -20,10 +20,9 @@ const options = {
   transitionDuration: 1000,
 }
 
-export default function WordCloud() {
+export default function WordCloud({ words }) {
   return (
     <div>
-      <p>Configure options in the code editor!</p>
       <div style={{ height: 400, width: 600 }}>
         <ReactWordcloud options={options} words={words} />
       </div>

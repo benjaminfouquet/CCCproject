@@ -1,8 +1,9 @@
+/* eslint-disable react/prop-types */
 import React from 'react'
 import { CCard, CCardBody, CCardHeader, CCol, CFormSelect, CRow } from '@coreui/react'
 import { DocsCallout, DocsExample } from 'src/components'
 
-const Select = () => {
+const Select = ({ selectOptions }) => {
   return (
     <CRow>
       <CCol xs={12}>
@@ -16,10 +17,11 @@ const Select = () => {
           <CCardBody>
             <DocsExample href="forms/select">
               <CFormSelect aria-label="Default select example">
-                <option>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
+                {selectOptions.map((option, index) => (
+                  <option key={option} value={index}>
+                    {option}
+                  </option>
+                ))}
               </CFormSelect>
             </DocsExample>
           </CCardBody>
