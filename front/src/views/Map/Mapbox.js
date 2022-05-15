@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useCallback } from 'react'
 import ReactDOM from 'react-dom'
 import mapboxgl from 'mapbox-gl'
 import Legend from './Legend'
@@ -8,9 +8,7 @@ import './Mapbox.css'
 import data from 'src/assets/updated_sub.json'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import { CButton, CCallout } from '@coreui/react'
-import { getExample } from '../../api'
 import { getMap } from '../../api'
-import { getMainSuburb } from '../../api'
 //pop up
 const Popup = ({ routeName, offend, sentiment, crimeRate }) => (
   <div className="popup">
@@ -26,21 +24,9 @@ const Popup = ({ routeName, offend, sentiment, crimeRate }) => (
 mapboxgl.accessToken =
   'pk.eyJ1IjoibHVuYWxpYW5nIiwiYSI6ImNsMmxtY3NvOTBvZTAzbG5xNzQwM2tsaXMifQ.5lgZAlrVz9lZybZTOv6JAQ'
 const Mapbox = () => {
-
-  const [example, setExample] = useState([])
-  const loadExample = async () => {
-    const example = await getMap()
-    setExample(example)
-    updateSub(example)
-  }
-  useEffect(() => {
-    console.log(example)
-  }, [example])
-
   const ExampleButton = () => {
     return <CButton onClick={loadExample}>Refresh data</CButton>
   }
-
 
   const options = [
     {
@@ -89,8 +75,7 @@ const Mapbox = () => {
         [2500, '#c44cc0'],
         [5000, '#9f43d7'],
         [10000, '#6e40e6'],
-        [20000, '#36013F']
-
+        [20000, '#36013F'],
       ],
     },
   ]
@@ -99,26 +84,6 @@ const Mapbox = () => {
   const [map, setMap] = useState(null)
   const popUpRef = useRef(new mapboxgl.Popup({ offset: 15 }))
   const [dataset, setDataset] = useState(data)
-
-  const updateSub = (updateLs) => {
-    // const type = typeof updateLs
-    const newDataset = dataset
-    for (let i = 0; i < updateLs.length; i++) {
-      newDataset['features'][i]['properties']['crime_rate'] = updateLs[i]['crime_rate']
-      newDataset['features'][i]['properties']['sent_score'] = updateLs[i]['sent_score']
-      newDataset['features'][i]['properties']['no_offend'] = updateLs[i]['no_offensive']
-      setDataset(newDataset)
-      map.getSource('countries1').setData(dataset)
-      console.log(i)
-    }
-
-  }
-
-  const ConnectButton = () => {
-    return <CButton onClick={getExample}>connect</CButton>
-
-
-  }
 
   // Initialize map when component mounts
   useEffect(() => {
@@ -147,7 +112,6 @@ const Mapbox = () => {
           'text-font': ['literal', ['DIN Offc Pro Italic', 'Arial Unicode MS Regular']],
         },
       ])
-
 
       //layer for offensive lang and sentiment score
       map.addLayer(
@@ -194,22 +158,43 @@ const Mapbox = () => {
     })
 
     // Clean up on unmount
-    return () => map.remove();
-  }, []);
-
+    return () => map.remove()
+  }, [active.property, active.stops])
 
   useEffect(() => {
-    paint();
-  }, [active]);
-
-  const paint = () => {
-    if (map) {
-      map.setPaintProperty('countries', 'fill-color', {
-        property: active.property,
-        stops: active.stops
-      });
+    function paint() {
+      if (map) {
+        map.setPaintProperty('countries', 'fill-color', {
+          property: active.property,
+          stops: active.stops,
+        })
+      }
     }
-  };
+    paint()
+  }, [active, map])
+
+  const loadExample = useCallback(async () => {
+    function updateSub(updateLs) {
+      // const type = typeof updateLs
+      const newDataset = dataset
+      for (let i = 0; i < updateLs.length; i++) {
+        newDataset['features'][i]['properties']['crime_rate'] = updateLs[i]['crime_rate']
+        newDataset['features'][i]['properties']['sent_score'] = updateLs[i]['sent_score']
+        newDataset['features'][i]['properties']['no_offend'] = updateLs[i]['no_offensive']
+        setDataset(newDataset)
+        map.getSource('countries1').setData(dataset)
+      }
+    }
+
+    const example = await getMap()
+    updateSub(example)
+  }, [dataset, map])
+
+  useEffect(() => {
+    if (map) {
+      loadExample()
+    }
+  }, [loadExample, map])
 
   //switcher
   const changeState = (i) => {
@@ -218,14 +203,17 @@ const Mapbox = () => {
       property: active.property,
       stops: active.stops,
     })
-
   }
 
   return (
     <div>
       <h1>What influence the crime rate in Melbourne?</h1>
       <CCallout color="dark">
-        What influences the crime rate in Melbourne? We create this map that shows the sentiment, the number of offensive tweets, and the crime rate in different suburbs in Melbourne extracted from Twitter, wanting to explore the potential connections among them. Click the 'Refresh data' button to see the latest data. Switch options below the map to see different information. Click a specific suburb on the map to see its detailed data.
+        What influences the crime rate in Melbourne? We create this map that shows the sentiment,
+        the number of offensive tweets, and the crime rate in different suburbs in Melbourne
+        extracted from Twitter, wanting to explore the potential connections among them. Click the
+        &apos;Refresh data&apos; button to see the latest data. Switch options below the map to see
+        different information. Click a specific suburb on the map to see its detailed data.
       </CCallout>
       <ExampleButton />
       <div ref={mapContainerRef} className="h600 mt12" />
