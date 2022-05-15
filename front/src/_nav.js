@@ -26,6 +26,18 @@ const _nav = [
     },
   },
   {
+    component: CNavItem,
+    name: 'Crime Map',
+    to: '/Map',
+    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
+    name: 'Food Map',
+    to: '/FoodMap',
+    icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+  },
+  {
     component: CNavTitle,
     name: 'Theme',
   },

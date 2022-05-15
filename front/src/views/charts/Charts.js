@@ -13,7 +13,6 @@ const Charts = () => {
           content="React wrapper component for Chart.js 3.0, the most popular charting library."
         />
       </CCol>
-
       <CCol xs={6}>
         <CCard className="mb-4">
           <CCardHeader>Doughnut Chart</CCardHeader>
