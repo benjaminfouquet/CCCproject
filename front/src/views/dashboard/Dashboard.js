@@ -145,11 +145,13 @@ const Dashboard = () => {
                         : '#F87979',
                   },
                   {
-                    label: 'no.of offensive tweets',
+                    label: '% of offensive tweets',
                     yAxisID: 'B',
                     data:
                       suburbData.length > 0
-                        ? suburbData.map((suburb) => suburb['no_offensive'])
+                        ? suburbData.map(
+                            (suburb) => (100 * suburb['no_offensive']) / suburb['total_tweet'],
+                          )
                         : [],
                     backgroundColor:
                       suburbData.length > 0
