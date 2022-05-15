@@ -81,25 +81,22 @@ def update_mainsuburb():
 
     # get with sub
     all_counter_sub = {}
-    neg_counter_sub = {}
 
 
     for item in db1.view('data_reduce/word_freq_by_sub', group=True, group_level=3):
         word = item.key[0]
-        sent = item.key[1]
+        #sent = item.key[1]
         suburb = item.key[2]
         if not suburb in main_list:
             continue
         if not suburb in all_counter_sub.keys():
             all_counter_sub[suburb] = {}
-        if not suburb in neg_counter_sub.keys():
-            neg_counter_sub[suburb] = {}
 
         count = item.value
-        if sent == 'neg':
-            neg_counter_sub[suburb][word]=count
-        elif sent == 'all':
-            all_counter_sub[suburb][word]=count
+        #if sent == 'neg':
+        all_counter_sub[suburb][word]=count
+#        elif sent == 'all':
+#            all_counter_sub[suburb][word]=count
 
 
     all_output_dic = {}
@@ -112,6 +109,7 @@ def update_mainsuburb():
         suburb_count = suburb_count.most_common(50)
         all_output_dic[suburb] = reform(suburb_count)
 
+    """
     neg_output_dic = {}
     for suburb, counter in neg_counter_sub.items():
         sub_output_dict = {}
@@ -121,7 +119,7 @@ def update_mainsuburb():
         suburb_count = Counter(sub_output_dict)
         suburb_count = suburb_count.most_common(50)
         neg_output_dic[suburb] = reform(suburb_count)
-
+    """
 
     #get total tweet
     tweet_count_by_suburb = {}
@@ -129,6 +127,32 @@ def update_mainsuburb():
         suburb = item.key
         count = item.value
         tweet_count_by_suburb[suburb] = count
+
+    # get offensive word dict
+    offensive_counter_suburb = {}
+    for item in db1.view('data_reduce/offensive_freq_by_suburb', group=True, group_level=2):
+        suburb = item.key[0]
+        word = item.key[1]
+        count = item.value
+        if not suburb in main_list:
+            continue
+        if word == 'off':
+            continue
+        if not suburb in offensive_counter_suburb.keys():
+            offensive_counter_suburb[suburb] = {}
+        offensive_counter_suburb[suburb][word] = count
+
+    offensive_output_dic = {}
+    for suburb, counter in offensive_counter_suburb.items():
+        sub_output_dict = {}
+        for k, v in counter.items():
+            if (not (k.isdigit())) and (len(k) > 2):
+                sub_output_dict[k] = v
+        suburb_count = Counter(sub_output_dict)
+        suburb_count = suburb_count.most_common(50)
+        offensive_output_dic[suburb] = reform(suburb_count)
+
+
 
 
     # construct model
@@ -144,7 +168,7 @@ def update_mainsuburb():
             # offensive_by_hour = models
             offensive_by_hour=offensive_by_hour[suburb],
             word_freq=all_output_dic[suburb],
-            word_freq_neg=neg_output_dic[suburb]
+            word_freq_neg=offensive_output_dic[suburb]
             #word_freq=total_20, if all suburb
             #word_freq_neg=neg_20
         )

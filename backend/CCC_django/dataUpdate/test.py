@@ -15,6 +15,38 @@ db1 = couch['historical_with_cor']
 main_list = ['CARLTON', 'DOCKLANDS', 'EAST MELBOURNE', 'KENSINGTON', 'FLEMINGTON', 'PARKVILLE', 'PORT MELBOURNE',
                  'SOUTHBANK',
                  'MELBOURNE', 'SOUTH MELBOURNE', 'SOUTH YARRA', 'WEST MELBOURNE', 'NORTH MELBOURNE', 'CARLTON NORTH']
+
+
+def reform(dict):
+    output_dict = []
+    for (key, value) in dict:
+        output_dict.append({"text": key, "value": value})
+    return output_dict
+
+# get offensive word dict
+offensive_counter_suburb = {}
+for item in db1.view('data_reduce/offensive_freq_by_suburb', group=True, group_level=2):
+    suburb = item.key[0]
+    word = item.key[1]
+    count = item.value
+    if not suburb in main_list:
+        continue
+    if word == 'off':
+        continue
+    if not suburb in offensive_counter_suburb.keys():
+        offensive_counter_suburb[suburb] = {}
+    offensive_counter_suburb[suburb][word] = count
+
+offensive_output_dic = {}
+for suburb, counter in offensive_counter_suburb.items():
+    sub_output_dict = {}
+    for k, v in counter.items():
+        if (not (k.isdigit())) and (len(k) > 2):
+            sub_output_dict[k] = v
+    suburb_count = Counter(sub_output_dict)
+    suburb_count = suburb_count.most_common(50)
+    offensive_output_dic[suburb] = reform(suburb_count)
+
 # get word freq grouped by sentiments
 
 tweet_count_by_suburb = {}
