@@ -101,27 +101,6 @@ const Dashboard = () => {
 
   return (
     <>
-      <CCol xs={12}>
-        <CCard className="mb-4">
-          <CCardHeader>
-            <strong>Select a suburb</strong>
-          </CCardHeader>
-          <CCardBody>
-            <CFormSelect
-              aria-label="Default select example"
-              onChange={(e) => {
-                setSelectedSuburb(parseInt(e.target.value))
-              }}
-            >
-              {selectOptions.map((option, index) => (
-                <option key={option} value={index}>
-                  {option}
-                </option>
-              ))}
-            </CFormSelect>
-          </CCardBody>
-        </CCard>
-      </CCol>
       <div>
         <CCard className="mb-4 mt-4">
           <CCardHeader>Crime rates, Tweets and Sentiment by suburb</CCardHeader>
@@ -188,6 +167,27 @@ const Dashboard = () => {
           </CCardFooter>
         </CCard>
       </div>
+      <CCol xs={12}>
+        <CCard className="mb-4">
+          <CCardHeader>
+            <strong>Select a suburb</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CFormSelect
+              aria-label="Default select example"
+              onChange={(e) => {
+                setSelectedSuburb(parseInt(e.target.value))
+              }}
+            >
+              {selectOptions.map((option, index) => (
+                <option key={option} value={index}>
+                  {option}
+                </option>
+              ))}
+            </CFormSelect>
+          </CCardBody>
+        </CCard>
+      </CCol>
       {suburbData.length > 0 ? (
         <WidgetsDropdown selectedSuburbData={suburbData[selectedSuburb]} />
       ) : (
