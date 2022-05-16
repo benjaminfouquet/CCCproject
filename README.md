@@ -23,7 +23,7 @@ This app is hosted on http://172.26.131.21:3000
 Here is the system architure of our system
 ![image](https://user-images.githubusercontent.com/80622629/168474673-1b3e4a87-f543-41f9-a171-c4debeffe9b4.png)
 
-## Related deployment script
+## Related ansible deployment script
 
 ### 1. Deploy Couchdb on one node
  ```
