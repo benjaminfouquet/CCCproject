@@ -19,3 +19,17 @@ sample output after processing
 
 Run the code on sample CSV is:
 Python3 new_analysis.py
+
+## Sample output 
+
+### 1.location
+data_process -> reconstructed_analysis -> outputData
+
+### 2.detailed otuputdata
+1. nighttime_suburb_groupping.csv	
+2. offensive_hour_groupping.csv
+3. nighttime_tweet_count.csv	
+4. offensive_output_suburb.csv
+5. nighttime_word_freq.csv		
+6. offensive_suburb_groupping.csv
+
