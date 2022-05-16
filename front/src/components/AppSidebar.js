@@ -2,12 +2,8 @@ import React from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 
 import { CSidebar, CSidebarBrand, CSidebarNav, CSidebarToggler } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
 
 import { AppSidebarNav } from './AppSidebarNav'
-
-import logoNegative from 'src/assets/images/cloud-computing-logo.png'
-import sygnet from 'src/assets/images/cloud-computing-logo.png'
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar/dist/simplebar.min.css'
@@ -29,10 +25,7 @@ const AppSidebar = () => {
         dispatch({ type: 'set', sidebarShow: visible })
       }}
     >
-      <CSidebarBrand className="d-none d-md-flex" to="/">
-        <CIcon className="sidebar-brand-full" icon={logoNegative} height={35} />
-        <CIcon className="sidebar-brand-narrow" icon={sygnet} height={35} />
-      </CSidebarBrand>
+      <CSidebarBrand className="d-none d-md-flex" to="/"></CSidebarBrand>
       <CSidebarNav>
         <SimpleBar>
           <AppSidebarNav items={navigation} />
