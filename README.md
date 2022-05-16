@@ -26,27 +26,27 @@ Here is the system architure of our system
 ## Related deployment script
 
 ### 1. Deploy Couchdb on one node
- ```bash
+ ```
  ansible/ansible_playbook/deploy_couchdb.sh
  ```
 
 ### 2. Configure clusters on the master node
-```bash
+```
 ansible/ansible_playbook/setup_couchdb_cluster.sh
 ```
 
 ### 3. Deploy twitter harvesters
-```bash
+```
 ansible/ansible_playbook/deploy_harvester.sh
 ```
 
 ### 4. Deploy the backend
-```bash
+```
 ansible/ansible_playbook/deploy_backend.sh
 ```
 
 ### 5. Deploy the frontend
-```bash
+```
 ansible/ansible_playbook/deploy_frontend.sh
 ```
 
