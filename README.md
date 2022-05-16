@@ -15,7 +15,7 @@ Siri Liang| 1137743
 Juan Dai | 1025253
 
 ## Web Application 
-This app is hosted on `172.26.131.21:3000`
+This app is hosted on http://172.26.131.21:3000
 
 ***(Note: You should connect Univeristy VPN to be able to connect to the application)***
 
