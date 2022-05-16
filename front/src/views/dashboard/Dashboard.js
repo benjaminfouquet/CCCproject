@@ -62,8 +62,6 @@ const Dashboard = () => {
     '23:00',
   ]
 
-  const today = new Date()
-
   const fetchSuburbData = async () => {
     const newSuburbData = await getMainSuburb()
     setSuburbData(newSuburbData)
@@ -202,7 +200,6 @@ const Dashboard = () => {
               <h4 id="traffic" className="card-title mb-0">
                 Offensive Tweets by Hour
               </h4>
-              <div className="small text-medium-emphasis">{today.toLocaleDateString('en-AU')}</div>
             </CCol>
           </CRow>
           <CChartLine
