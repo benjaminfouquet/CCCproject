@@ -1,0 +1,53 @@
+---
+
+- name: copy ssh key for github
+  copy: 
+    src: "config/github.key"
+    dest: /home/ubuntu/.ssh/id_rsa
+    mode: 0600
+
+
+- name: copy ssh config file to VM
+  template: 
+    src: "config/ssh_config"
+    dest: /home/ubuntu/.ssh/config
+    owner: ubuntu
+    group: ubuntu
+    mode: 0644
+
+
+- name: make directory for final version
+  file:
+    path: /home/ubuntu/final_git
+    state: directory
+    owner: ubuntu
+    group: ubuntu
+    mode: 0755
+
+
+- name: check if a version exists
+  stat:
+    path: "/home/ubuntu/final_git/CCCProject/.git"
+  register: git_existnce
+
+
+
+- name: git pull if a version exists, merge new changes
+
+  shell: git pull git@github.com:QuYuze/CCCProject.git
+  args: 
+    chdir: /home/ubuntu/final_git/CCCProject
+  when: git_existnce.stat.exists
+
+
+- name: git clone if no version exists
+
+  shell: git clone git@github.com:QuYuze/CCCProject.git
+  args: 
+    chdir: /home/ubuntu/final_git
+  when: not git_existnce.stat.exists
+
+#- name: git pull from our repo
+#  become: True
+#  shell: git clone git@github.com:QuYuze/CCCProject.git
+#  args: /home/ubuntu/final_git

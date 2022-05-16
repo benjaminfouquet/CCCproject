@@ -1,0 +1,7 @@
+---
+
+- name: copy twitter api token to harvester directory
+  copy: 
+    src: "config/api_key.txt"
+    dest: /home/ubuntu/final_git/CCCProject/harvester/api_key.txt
+    mode: 0440

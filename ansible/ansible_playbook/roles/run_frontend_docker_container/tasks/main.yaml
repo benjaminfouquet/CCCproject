@@ -1,0 +1,13 @@
+---
+
+- name: shut down previous container
+  become: True
+  shell: docker-compose down --rmi local
+  args:
+    chdir: /home/ubuntu/final_git/CCCProject/front
+
+- name: Run the frontend docker container and publish using port 3000
+  become: True
+  shell: docker-compose up --build -d
+  args:
+    chdir: /home/ubuntu/final_git/CCCProject/front

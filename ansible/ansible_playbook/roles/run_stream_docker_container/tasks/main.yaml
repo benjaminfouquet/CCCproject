@@ -1,0 +1,13 @@
+---
+
+- name: shut down previous container
+  become: True
+  shell: docker-compose down --rmi local
+  args:
+    chdir: /home/ubuntu/final_git/CCCProject/harvester
+
+- name: Run the stream docker container and populate database "final_db"
+  become: True
+  shell: docker-compose up --build -d
+  args:
+    chdir: /home/ubuntu/final_git/CCCProject/harvester

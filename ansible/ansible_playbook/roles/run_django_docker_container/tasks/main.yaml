@@ -1,0 +1,13 @@
+---
+
+- name: shut down previous container
+  become: True
+  shell: docker-compose down --rmi local
+  args:
+    chdir: /home/ubuntu/final_git/CCCProject/backend/CCC_django
+
+- name: Run the Django docker container as a Rest api
+  become: True
+  shell: docker-compose up --build -d
+  args:
+    chdir: /home/ubuntu/final_git/CCCProject/backend/CCC_django

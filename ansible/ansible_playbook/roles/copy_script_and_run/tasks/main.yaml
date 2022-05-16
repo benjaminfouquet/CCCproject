@@ -1,0 +1,12 @@
+---
+
+- name: copy script to VMs
+  copy:
+    src: "config/setup_one_node.sh"
+    dest: /home/ubuntu/setup_one_node.sh
+    mode: 0770
+
+- name: Change the working directory, execute the script
+  ansible.builtin.shell: setup_one_node.sh
+  args:
+    chdir: /home/ubuntu

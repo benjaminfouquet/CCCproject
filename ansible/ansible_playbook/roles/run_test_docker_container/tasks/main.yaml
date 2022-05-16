@@ -1,0 +1,14 @@
+---
+
+- name: shut down previous container
+  become: True
+  shell: docker-compose down --rmi local
+  args:
+    chdir: /home/ubuntu/try_docker_compose
+
+- name: Run the test docker container and print hello world
+  become: True
+  shell: docker-compose up --build -d
+  args:
+    chdir: /home/ubuntu/try_docker_compose
+
