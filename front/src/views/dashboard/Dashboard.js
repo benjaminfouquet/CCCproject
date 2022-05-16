@@ -62,8 +62,6 @@ const Dashboard = () => {
     '23:00',
   ]
 
-  const today = new Date()
-
   const fetchSuburbData = async () => {
     const newSuburbData = await getMainSuburb()
     setSuburbData(newSuburbData)
@@ -103,27 +101,6 @@ const Dashboard = () => {
 
   return (
     <>
-      <CCol xs={12}>
-        <CCard className="mb-4">
-          <CCardHeader>
-            <strong>Select a suburb</strong>
-          </CCardHeader>
-          <CCardBody>
-            <CFormSelect
-              aria-label="Default select example"
-              onChange={(e) => {
-                setSelectedSuburb(parseInt(e.target.value))
-              }}
-            >
-              {selectOptions.map((option, index) => (
-                <option key={option} value={index}>
-                  {option}
-                </option>
-              ))}
-            </CFormSelect>
-          </CCardBody>
-        </CCard>
-      </CCol>
       <div>
         <CCard className="mb-4 mt-4">
           <CCardHeader>Crime rates, Tweets and Sentiment by suburb</CCardHeader>
@@ -190,6 +167,27 @@ const Dashboard = () => {
           </CCardFooter>
         </CCard>
       </div>
+      <CCol xs={12}>
+        <CCard className="mb-4">
+          <CCardHeader>
+            <strong>Select a suburb</strong>
+          </CCardHeader>
+          <CCardBody>
+            <CFormSelect
+              aria-label="Default select example"
+              onChange={(e) => {
+                setSelectedSuburb(parseInt(e.target.value))
+              }}
+            >
+              {selectOptions.map((option, index) => (
+                <option key={option} value={index}>
+                  {option}
+                </option>
+              ))}
+            </CFormSelect>
+          </CCardBody>
+        </CCard>
+      </CCol>
       {suburbData.length > 0 ? (
         <WidgetsDropdown selectedSuburbData={suburbData[selectedSuburb]} />
       ) : (
@@ -202,7 +200,6 @@ const Dashboard = () => {
               <h4 id="traffic" className="card-title mb-0">
                 Offensive Tweets by Hour
               </h4>
-              <div className="small text-medium-emphasis">{today.toLocaleDateString('en-AU')}</div>
             </CCol>
           </CRow>
           <CChartLine
