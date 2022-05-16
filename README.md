@@ -18,9 +18,9 @@ Juan Dai | 1025253
 Here is the system architure of our system
 ![image](https://user-images.githubusercontent.com/80622629/168474673-1b3e4a87-f543-41f9-a171-c4debeffe9b4.png)
 
-## deployment script
+## Deployment script
 
-## Youtube video link
+## Youtube/Google drive video link
 
 ## Collaborative drive link
 https://drive.google.com/drive/folders/1pNQQmzxCwkAYndEj8-nfMgX36bdgxB3o
