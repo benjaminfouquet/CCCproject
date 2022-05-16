@@ -175,7 +175,9 @@ const Mapbox = () => {
     }
 
     const example = await getMap()
-    updateSub(example)
+    if (map) {
+      updateSub(example)
+    }
   }, [dataset, map])
 
   useEffect(() => {
