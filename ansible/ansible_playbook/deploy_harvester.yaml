@@ -1,0 +1,8 @@
+---
+- hosts: stream_crawler
+  gather_facts: true
+  roles:
+    - role: git_pull
+    - role: share_tokens
+    - role: run_stream_docker_container
+    

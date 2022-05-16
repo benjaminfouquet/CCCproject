@@ -1,0 +1,12 @@
+---
+
+- name: copy script to VMs
+  copy:
+    src: "config/setup_cluster.sh"
+    dest: /home/ubuntu/setup_cluster.sh
+    mode: 0770
+
+- name: Change the working directory, execute the script
+  ansible.builtin.shell: setup_cluster.sh
+  args:
+    chdir: /home/ubuntu
