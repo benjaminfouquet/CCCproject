@@ -8,7 +8,7 @@ To achieve superb performance of the system, we developed a cloud-based applicat
 ## Group Members
 Student Name | Student ID 
 --- | --- 
-Wentao Guo | 1256470
+Wentao Gao | 1256470
 Benjamin Fouquent | 1267505
 Yuze Qu | 1289458
 Siri Liang| 1137743
