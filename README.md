@@ -51,6 +51,7 @@ ansible/ansible_playbook/deploy_frontend.sh
 ```
 
 ## Youtube/Google drive video link
+https://drive.google.com/drive/folders/1GRHb_pd2x7DJMgBvEUVYIhNTmjS1VPD6
 
 ## Collaborative drive link(Google Drive)
 https://drive.google.com/drive/folders/1pNQQmzxCwkAYndEj8-nfMgX36bdgxB3o
